@@ -62,13 +62,17 @@ class HipchatMessage(Plugin):
         notify = self.get_option('notify', event.project) or False
         include_project_name = self.get_option('include_project_name', event.project) or False
         level = event.get_level_display().upper()
-        link = '<a href="%(base)s/%(team)s/%(project)s/group/%(group)d/events/%(event)d/">(link)</a>' % {
+        format_data = {
             'base': settings.URL_PREFIX,
             'team': group.project.team.slug,
             'project': group.project.slug,
             'group': group.id,
             'event': event.id,
         }
+        if event.id:
+            link = '<a href="%(base)s/%(team)s/%(project)s/group/%(group)d/events/%(event)d/">(link)</a>' % format_data
+        else:
+            link = '<a href="%(base)s/%(team)s/%(project)s/group/%(group)d/">(link)</a>' % format_data
 
         if token and room:
             self.send_payload(token, room, (u'%(site)s[%(server)s]%(project_name)s %(message)s %(link)s' % {
